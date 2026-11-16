@@ -1,6 +1,8 @@
 import hashlib, json
 def checksum(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()
+    # 紧凑规范 JSON：无多余空格、键排序、非 ASCII 原样；与前端 utils/checksum.js 完全对齐
+    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False,
+                                     separators=(',', ':')).encode()).hexdigest()
 def dataset_dict(d):
     return {'id':d.id, 'name':d.name, 'source':d.source, 'rows':len(d.records), 'checksum':d.checksum, 'created_at':d.created_at}
 def job_dict(j):

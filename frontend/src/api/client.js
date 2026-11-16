@@ -1,7 +1,7 @@
 import {session} from '../stores/session.js';
 export async function api(path,options={}){
  const r=await fetch('/api'+path,{...options,headers:{'Content-Type':'application/json',...(session.token?{Authorization:'Bearer '+session.token}:{}),...options.headers}});
- if(!r.ok){let d=await r.json().catch(()=>({detail:'连接失败，请稍后重试'}));if(r.status===401&&path!='/auth/login'){session.clear();location.hash='#/login';}throw new Error(typeof d.detail==='string'?d.detail:JSON.stringify(d.detail));}
+ if(!r.ok){let d=await r.json().catch(()=>({detail:'连接失败，请稍后重试'}));if(r.status===401&&path!='/auth/login'){session.clear();location.hash='#/login';}const detail=d.detail;const message=typeof detail==='string'?detail:(detail?.message||(detail?JSON.stringify(detail):'请求失败'));throw new Error(message);}
  return r.json();
 }
 export async function download(id,format){
